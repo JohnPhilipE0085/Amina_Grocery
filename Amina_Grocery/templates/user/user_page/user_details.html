@@ -1,0 +1,59 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <h2 class="text-center mb-4">Edit Profile</h2>
+
+        <form method="POST" action="{% url 'user_account' %}">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}"
+                    required>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+            </div>
+            {% if user_password is None %}
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password"
+                    placeholder="Enter old password if you want to reset">
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="new_password"
+                    placeholder="Enter New password">
+            </div>
+            {% else %}
+            <div class="alert alert-info d-flex align-items-center mt-3" role="alert" style="border-radius: 10px; font-size: 16px;">
+                <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google Icon"
+                    style="width: 24px; height: 24px; margin-right: 10px;">
+                <span>You are logged in using <strong>Google verification</strong>.</span>
+            </div>
+            {% endif %}
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"
+        role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+</div>
+
+{% endblock %}

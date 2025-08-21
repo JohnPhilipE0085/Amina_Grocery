@@ -1,0 +1,99 @@
+{% extends 'admin/admin_base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<style>
+    .order-card {
+        max-width: 600px;
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin: 20px auto;
+        transition: transform 0.2s ease;
+    }
+    .order-card:hover {
+        transform: translateY(-3px);
+    }
+    .order-info p {
+        margin: 6px 0;
+        font-size: 14px;
+        color: #333;
+    }
+    .order-info strong {
+        color: #000;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+    .btn {
+        padding: 6px 16px;
+        font-size: 14px;
+        border-radius: 6px;
+        transition: background-color 0.2s ease;
+    }
+</style>
+
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{% for product in products %}
+<div class="order-card">
+    <div class="order-info">
+        <p><strong>Customer Name:</strong> {{ product.order.user.username }}</p>
+        <p><strong>Product Name:</strong> {{ product.order.product.name }}</p>
+        <p><strong>Order ID:</strong> {{ product.order.order_id }}</p>
+        <p><strong>Price:</strong> ₹{{ product.order.price }}</p>
+        <p><strong>Payment:</strong> {{ product.order.payment_option }}</p>
+        <p><strong>Reason:</strong> {{ product.reason }}</p>
+    </div>
+
+    <div class="action-buttons">
+        <a href="{% url 'Reject_return' order_id=product.order.order_id %}"
+           class="btn btn-danger action-reject"
+           data-action="reject"
+           data-product="{{ product.order.product.name }}">
+           Reject
+        </a>
+        <a href="{% url 'approve_return' order_id=product.order.order_id %}"
+           class="btn btn-success action-approve"
+           data-action="approve"
+           data-product="{{ product.order.product.name }}">
+           Approve
+        </a>
+    </div>
+</div>
+{% endfor %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".action-reject, .action-approve").forEach(button => {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();
+            let url = this.getAttribute("href");
+            let actionType = this.dataset.action;
+            let productName = this.dataset.product;
+
+            Swal.fire({
+                title: `Are you sure you want to ${actionType} this return?`,
+                text: `Product: ${productName}`,
+                icon: actionType === "approve" ? "success" : "warning",
+                showCancelButton: true,
+                confirmButtonColor: actionType === "approve" ? "#28a745" : "#d33",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: `Yes, ${actionType.charAt(0).toUpperCase() + actionType.slice(1)} it`,
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

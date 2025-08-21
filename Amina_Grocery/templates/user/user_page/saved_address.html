@@ -1,0 +1,49 @@
+{% extends 'home/base.html' %} <!-- Ensure this extends your base template -->
+
+{% block content %}
+<div class="container">
+    <br>
+    <a href="{% url 'add_address' %}" class="btn btn-success">Add New Address</a>
+    <br><br>
+
+    {% if user_address %}
+    <div class="row">
+        {% for address in user_address %}
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 mb-4 bg-white rounded">
+                <div class="card-body">
+                    <h5 class="card-title">{{ address.full_name }}</h5>
+                    <p class="card-text">
+                        <strong>Phone No:</strong> {{ address.phone_no }}<br>
+                        <strong>House No:</strong> {{ address.house_no }}<br>
+                        <strong>Landmark:</strong> {{ address.land_mark }}
+                        <strong>Place:</strong> {{ address.place }}<br>
+                        <strong>Pincode:</strong> {{ address.pincode }}<br>
+                        <strong>City:</strong> {{ address.city }}<br>
+                        </h1>
+                        
+                    </p>
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'edit_address' address_id=address.id %}" class="btn btn-warning">Edit</a>
+                        <a href="{% url 'delete_address' address_id=address.id %}" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No saved addresses found.</p>
+    {% endif %}
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"
+        role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

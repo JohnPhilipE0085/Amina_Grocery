@@ -1,0 +1,72 @@
+{% extends 'admin/admin_base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Add to Offer Zone -->
+        <div class="col-md-6">
+            <div class="card shadow p-4">
+                <h4 class="text-success">Add to Offer Zone</h4>
+                <hr>
+                <form method="POST" action="{% url 'offer_products' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {% for product in products %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="products" value="{{ product.id }}" id="product{{ product.id }}">
+                                <label class="form-check-label" for="product{{ product.id }}">
+                                    {{ product.name }}
+                                </label>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted">No products available.</p>
+                        {% endfor %}
+                    </div>
+                    <button type="submit" class="btn btn-success mt-3 w-100">Add to Offer Zone</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Remove from Offer Zone -->
+        <div class="col-md-6">
+            <div class="card shadow p-4">
+                <h4 class="text-danger">Remove from Offer Zone</h4>
+                <hr>
+                <form method="POST" action="{% url 'offer_products' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {% for product in offer_products %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="offer_products" value="{{ product.id }}" id="offer_product{{ product.id }}">
+                                <label class="form-check-label" for="offer_product{{ product.id }}">
+                                    {{ product.name }}
+                                </label>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted">No offer products available.</p>
+                        {% endfor %}
+                    </div>
+                    <button type="submit" class="btn btn-danger mt-3 w-100">Remove from Offer Zone</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 10px;
+        border: none;
+        transition: 0.3s;
+    }
+    .card:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .form-check-label {
+        font-weight: 500;
+    }
+</style>
+{% endblock %}

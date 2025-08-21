@@ -1,0 +1,40 @@
+body { background-color: #d4e9af; }
+.navbar { background-color: #b0d480; }
+
+/* Category Button Styling */
+.category-btn { 
+    background-color: #c5e1a5; 
+    border: none; 
+    padding: 12px 20px; 
+    margin: 5px; 
+    font-weight: bold; 
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hover Effect for Category Buttons */
+.category-btn:hover {
+    background-color: #8bc34a;  /* Darker green */
+    color: white;
+    transform: scale(1.1);  /* Slightly increase size */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Styling for Hot Deals */
+.product-card { 
+    background-color: #f1f8e9; 
+    padding: 15px; 
+    border-radius: 10px; 
+    text-align: center; 
+    font-weight: bold;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Hover Effect for Hot Deal Cards */
+.product-card:hover {
+    background-color: #dcedc8;
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.footer { background-color: #222; color: white; padding: 20px 0; }

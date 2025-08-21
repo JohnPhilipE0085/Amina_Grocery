@@ -1,0 +1,43 @@
+{% extends 'home/base.html' %}  <!-- Ensure this extends your base template -->
+
+{% block content %}
+<div class="container">
+    <h2>Add New Address</h2>
+    <form class="address-form" action="" method="POST">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Full Name" required>
+        <input type="text" name="house_no" placeholder="House No" required>
+        <input type="tel" name="phone_no" placeholder="Phone No" required>
+        <input type="text" name="pincode" placeholder="Pincode" required>
+        <input type="text" name="city" placeholder="City" required>
+        <input type="text" name="place" placeholder="Place" required>
+        <input type="text" name="land_mark" placeholder="Landmark" required>
+        <button type="submit">Save Address</button>
+    </form>
+</div>
+
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+<style>
+    
+    .address-form input, .address-form button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .address-form button {
+            background-color: green;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    
+</style>
+{% endblock %}

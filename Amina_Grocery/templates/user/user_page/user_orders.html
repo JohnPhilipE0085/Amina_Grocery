@@ -1,0 +1,178 @@
+{% extends 'home/base.html' %}
+{% block content %}
+
+<div class="product-list">
+    <h4 class="text-center mb-4">Purchased Products</h4>
+
+    {% for product in purchased_products %}
+    <div class="product-card">
+        <img src="{{ product.product.image1.url }}" alt="{{ product.product.name }}">
+
+        <div class="product-details">
+            <h3>{{ product.product.name }}</h3>
+            <p><strong>Price:</strong> ₹{{ product.product.offer_price }}</p>
+            <p><strong>Quantity:</strong> {{ product.quantity }}</p>
+            <p><strong>Discounted Price:</strong> {{ product.discount_price }}</p>
+            <p><strong>Total:</strong> ₹{{ product.total_price }}</p>
+            <p><strong>Payment:</strong> {{ product.payment_option|upper }}</p>
+            <p><strong>Purchased Date:</strong> {{ product.created_at }}</p>
+            <p>
+                <strong>Status:</strong>
+                <span class="status {{ product.delivery_status|lower }}">
+                    {{ product.delivery_status }}
+                </span>
+            </p>
+        </div>
+        
+        <div class="action-buttons">
+            {% if product.delivery_status == 'Delivered' %}
+                {% if product.product.category.name == "Fruits" or product.product.category.name == 'Vegetables' %}
+                    <button class="btn btn-warning confirm-action" data-url="{% url 'return_product' order_id=product.order_id %}"
+                        data-message="Are you sure you want to Refund for this product?">
+                        Refund
+                    </button>
+                {% else %}
+                        <button class="btn btn-warning confirm-action" data-url="{% url 'return_product' order_id=product.order_id %}"
+                            data-message="Are you sure you want to return this product?">
+                            Return
+                        </button>
+                {% endif %}
+                {% if product.reviewed %}
+                <a href="{% url 'edit_review' order_id=product.order_id %}" class="btn btn-success">
+                    Edit Review
+                </a>
+                {% else %}
+                <a href="{% url 'user_review' order_id=product.order_id %}" class="btn btn-success">
+                    Write a Review
+                </a>
+                {% endif %}
+                
+            {% elif product.delivery_status == 'Confirmed' or product.delivery_status == 'Shipped' %}
+                <button class="btn btn-danger confirm-action"
+                        data-url="{% url 'cancel_product' order_id=product.order_id %}"
+                        data-message="Are you sure you want to cancel this order?">
+                    Cancel
+                </button>
+            {% elif product.delivery_status == 'Cancelled' %}
+                <button class="btn btn-secondary" disabled>Cancelled</button>
+            {% elif product.delivery_status == 'Returned' %}
+                <button class="btn btn-warning" disabled>Returned</button>
+            {% elif product.delivery_status == 'Rejected' %}
+                <button class="btn btn-dark" disabled>Rejected</button>
+            {% endif %}
+
+            
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="text-center my-4">
+        <a href="{% url 'generate_invoice' cart_id=cart_id %}" 
+           class="btn btn-danger btn-sm px-4 py-2 rounded">
+            Download Invoice
+        </a>
+    </div>
+</div>
+
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    .product-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        padding: 10px;
+    }
+    .product-card {
+        display: flex;
+        align-items: center;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        width: 80%;
+        margin: auto;
+        gap: 15px;
+    }
+    .product-card img {
+        width: 100px;
+        height: 100px;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+    .product-details {
+        flex: 1;
+        font-size: 16px;
+    }
+    .product-details h3 {
+        margin: 0;
+        font-size: 18px;
+        color: #333;
+    }
+    .product-details p {
+        margin: 5px 0;
+        color: #555;
+    }
+    .status {
+        font-weight: bold;
+        padding: 3px 8px;
+        border-radius: 4px;
+        text-transform: capitalize;
+    }
+    .status.confirmed { background-color: #17a2b8; color: white; }
+    .status.shipped { background-color: #007bff; color: white; }
+    .status.delivered { background-color: #28a745; color: white; }
+    .status.cancelled { background-color: #fd7e14; color: white; }
+    .status.returned { background-color: #dc3545; color: white; }
+    .status.rejected { background-color: #6c757d; color: white; }
+    .status.requested { background-color: #ffc107; color: black; }
+    .action-buttons button {
+        padding: 8px 15px;
+        font-size: 14px;
+        border-radius: 5px;
+    }
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".confirm-action").forEach(button => {
+        button.addEventListener("click", function () {
+            let url = this.getAttribute("data-url");
+            let message = this.getAttribute("data-message");
+
+            // Custom confirmation popup
+            let confirmBox = document.createElement("div");
+            confirmBox.innerHTML = `
+                <div style="position: fixed; top:0; left:0; width:100%; height:100%;
+                            background: rgba(0,0,0,0.5); display:flex; 
+                            justify-content:center; align-items:center; z-index:9999;">
+                    <div style="background:white; padding:20px; border-radius:8px; text-align:center; width:300px;">
+                        <p style="font-size:16px; margin-bottom:20px;">${message}</p>
+                        <button id="confirmYes" style="background:#dc3545; color:white; padding:8px 15px; border:none; border-radius:5px; margin-right:10px;">Yes</button>
+                        <button id="confirmNo" style="background:#6c757d; color:white; padding:8px 15px; border:none; border-radius:5px;">No</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(confirmBox);
+
+            document.getElementById("confirmYes").onclick = function () {
+                window.location.href = url;
+            };
+            document.getElementById("confirmNo").onclick = function () {
+                confirmBox.remove();
+            };
+        });
+    });
+});
+</script>
+
+{% endblock %}

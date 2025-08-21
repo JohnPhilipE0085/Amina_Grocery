@@ -1,0 +1,262 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">Your Cart</h2>
+
+    {% if cart_items %}
+    <div class="row">
+        <!-- Product List -->
+        <div class="col-lg-8">
+            <div class="row">
+                {% for item in cart_items %}
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm {% if not item.product.is_in_stock %}out-of-stock-card{% endif %}">
+                        <div class="row g-0">
+                            <!-- Product Image -->
+                            <div class="col-4 d-flex justify-content-center align-items-center position-relative p-2">
+                                <a href="{% if item.product.is_in_stock %}{% url 'user_product' product=item.product.name %}{% endif %}"
+                                   class="{% if not item.product.is_in_stock %}disabled-link{% endif %}">
+                                    <img src="{{ item.product.image1.url }}" 
+                                         alt="{{ item.product.name }}"
+                                         class="img-fluid rounded product-img {% if not item.product.is_in_stock %}out-of-stock-img{% endif %}">
+                                    {% if not item.product.is_in_stock %}
+                                        <div class="out-of-stock-overlay">OUT OF STOCK</div>
+                                    {% endif %}
+                                </a>
+                            </div>
+
+                            <!-- Product Details -->
+                            <div class="col-8">
+                                <div class="card-body">
+                                    <h5 class="card-title text-dark">
+                                        {{ item.product.name }}
+                                        {% if not item.product.is_in_stock %}
+                                            <span class="badge bg-danger ms-2">Out of Stock</span>
+                                        {% endif %}
+                                    </h5>
+                                    <p class="card-text fw-bold">₹{{ item.product.offer_price|floatformat:2 }}</p>
+
+                                    {% if item.product.is_in_stock %}
+                                    <div class="qty-container">
+                                        <button class="qty-btn decrement" data-product-id="{{ item.product.id }}">-</button>
+                                        <input type="text" class="qty-input" id="quantity-{{ item.product.id }}" value="{{ item.quantity }}" readonly>
+                                        <button class="qty-btn increment" data-product-id="{{ item.product.id }}">+</button>
+                                    </div>
+                                    {% endif %}
+
+                                    <!-- Remove Button (Triggers Modal) -->
+                                    <button type="button" class="btn btn-sm btn-danger mt-2"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#removeItemModal{{ item.product.id }}">
+                                        Remove
+                                    </button>
+
+                                    <!-- Bootstrap Modal -->
+                                    <div class="modal fade" id="removeItemModal{{ item.product.id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-danger text-white">
+                                                    <h5 class="modal-title">Confirm Removal</h5>
+                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <p>Are you sure you want to remove <strong>{{ item.product.name }}</strong> from your cart?</p>
+                                                    <i class="bi bi-exclamation-triangle-fill text-warning fs-2"></i>
+                                                </div>
+                                                <div class="modal-footer justify-content-center">
+                                                    <form method="POST" action="{% url 'remove_cart_item' %}">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                                                        <button type="submit" class="btn btn-danger px-4">Yes, Remove</button>
+                                                    </form>
+                                                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- End Modal -->
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Price Summary -->
+        <div class="col-lg-4 mt-3">
+            <div class="offer-details shadow-sm p-3 bg-white rounded">
+                <h3>AVAILABLE OFFERS</h3>
+                <form action="{% url 'coupon_add' %}" method="POST">
+                    {% csrf_token %}
+                    <table>
+                        <tr>
+                            <td>
+                                <input type="radio" name="coupon" id="offer0" value="0" 
+                                       {% if not applied_coupon or applied_coupon == "0" %}checked{% endif %}>
+                                <label for="offer0">No Coupon: 0% OFF</label>
+                            </td>
+                        </tr>
+                        {% for coupon in coupons %}
+                        <tr>
+                            <td>
+                                <input type="radio" name="coupon" id="offer{{ forloop.counter }}"
+                                       value="{{ coupon.coupon_no }}"
+                                       {% if applied_coupon == coupon.coupon_no %}checked{% endif %}>
+                                <label for="offer{{ forloop.counter }}">
+                                    {{ coupon.coupon_no }}: {{ coupon.discount_percentage }}% OFF
+                                </label>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    <button type="submit" class="btn btn-success mt-3">Submit</button>
+                </form>
+            </div>
+
+            <div class="price-details shadow-sm p-3 bg-white rounded mt-3">
+                <h3>PRICE DETAILS</h3>
+                <table class="w-100">
+                    <tr>
+                        <td>Price (1 item)</td>
+                        <td class="text-end" id="mrp-price">₹{{ mrp_price }}</td>
+                    </tr>
+                    <tr>
+                        <td>Discount</td>
+                        <td class="text-end text-success" id="discount">– ₹{{ discount }}</td>
+                    </tr>
+                    <tr>
+                        <td>Coupon Discount</td>
+                        <td class="text-end text-success" id="coupon-discount">– ₹{{ coupon_discount }}</td>
+                    </tr>
+                    <tr>
+                        <td>Delivery Charges</td>
+                        <td class="text-end"><s>₹40</s> Free</td>
+                    </tr>
+                    <tr class="fw-bold">
+                        <td>Total Amount</td>
+                        <td class="text-end" id="grand-total">₹{{ grand_total }}</td>
+                    </tr>
+                </table>
+                <a href="{% url 'place_order' %}">
+                    <button class="btn btn-success w-100 mt-3">Place Order</button>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <p class="text-center fs-4 text-muted">Your cart is empty!</p>
+    {% endif %}
+</div>
+
+<!-- Toast Messages -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1055">
+  {% for message in messages %}
+  <div class="toast align-items-center text-white bg-{{ message.tags }} border-0 show mb-2">
+    <div class="d-flex">
+      <div class="toast-body">{{ message }}</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.toast').forEach(toastEl => {
+      new bootstrap.Toast(toastEl, { delay: 3000 }).show();
+    });
+  });
+</script>
+
+<!-- STYLES -->
+<style>
+.product-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+.qty-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #f1f1f1;
+    padding: 6px 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+.qty-btn {
+    padding: 6px 12px;
+    font-size: 18px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.qty-btn:hover { background-color: #0056b3; }
+.qty-input {
+    width: 40px;
+    text-align: center;
+    font-size: 16px;
+    border: none;
+    background-color: white;
+    border-radius: 4px;
+}
+.out-of-stock-card {
+    opacity: 0.85;
+    border-left: 4px solid #dc3545;
+}
+.out-of-stock-img {
+    filter: grayscale(80%);
+    opacity: 0.7;
+}
+.out-of-stock-overlay {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    background: rgba(220, 53, 69, 0.8);
+    color: white;
+    text-align: center;
+    padding: 2px 0;
+    font-size: 12px;
+    font-weight: bold;
+}
+.disabled-link { pointer-events: none; cursor: default; }
+</style>
+
+<!-- AJAX SCRIPT -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(function () {
+    $('.increment, .decrement').click(function () {
+        const productId = $(this).data('product-id');
+        const inputField = $('#quantity-' + productId);
+        const currentQty = parseInt(inputField.val());
+        const action = $(this).hasClass('increment') ? 'increment' : 'decrement';
+
+        if ((action === 'increment' && currentQty >= 5) || 
+            (action === 'decrement' && currentQty <= 1)) return;
+
+        $.post('/update-cart/', {
+            product_id: productId,
+            action: action,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }, function (response) {
+            inputField.val(response.new_quantity);
+            $('#mrp-price').text('₹' + response.mrp_price);
+            $('#discount').text('– ₹' + response.discount);
+            $('#coupon-discount').text('– ₹' + response.coupon_discount);
+            $('#grand-total').text('₹' + response.grand_total);
+        }).fail(function () {
+            alert("Error updating quantity.");
+        });
+    });
+});
+</script>
+{% endblock %}

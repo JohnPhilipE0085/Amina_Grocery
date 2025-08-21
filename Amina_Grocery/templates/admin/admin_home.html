@@ -1,0 +1,84 @@
+{% extends 'admin/admin_base.html' %}
+
+{% load static %}
+
+{% block title %}admin_dashboard{% endblock %}
+
+{% block content %}
+<!-- Dashboard Content -->
+<div class="container mt-4">
+    <div class="row">
+        <!-- Card 1 -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <p class="card-text">{{total_users}}</p>
+                </div>
+            </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Total Orders</h5>
+                    <p class="card-text">{{total_orders}}</p>
+                </div>
+            </div>
+        </div>
+        <!-- Card 3 -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Total Revenue</h5>
+                    <p class="card-text">₹{{total_price}}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- best selling products -->
+        <div class="col-md-4">
+            <a href="{% url 'best_selling' product='Product' %}" style="text-decoration: none; color: black;">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Best Selling Products</h5>
+                    <p class="card-text">Top 10</p>
+                </div>
+            </div>
+            </a>
+        </div>
+        <!-- best selling products graph-->
+        <div class="col-md-4">
+            <a href="{% url 'most_selling_products' %}" style="text-decoration: none; color: black;">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Best Selling Products Graph</h5>
+                    <p class="card-text">Top 10</p>
+                </div>
+            </div>
+            </a>
+        </div>
+        <!-- best selling category -->
+        <div class="col-md-4">
+            <a href="{% url 'best_selling' product='Cart' %}" style="text-decoration: none; color: black;">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Best Selling Category</h5>
+                    <p class="card-text">Top 10</p>
+                </div>
+            </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Total Discount</h5>
+                    <p class="card-text">{{total_discount}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

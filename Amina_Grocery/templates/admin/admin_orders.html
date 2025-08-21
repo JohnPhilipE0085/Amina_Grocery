@@ -1,0 +1,156 @@
+{% extends 'admin/admin_base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid black;
+        padding: 10px;
+        text-align: left;
+    }
+    select, button {
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+</style>
+
+<h2>Orders</h2>
+
+{% if orders %}
+<table>
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Details</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr id="order-{{ order.id }}">
+            <td>
+                {{ order.order_id }}
+                <span style="text-transform: uppercase; color: green;">
+                    <b>({{ order.payment_option }})</b>
+                </span>
+            </td>
+            <td>{{ order.user.username }}</td>
+            <td>{{ order.product.name }}</td>
+            <td>{{ order.quantity }}</td>
+            <td>
+                <a href="{% url 'user_details' order_id=order.order_id %}">
+                    <button class="btn btn-success">Details</button>
+                </a>
+            </td>
+
+            {% if order.delivery_status == 'Shipped' or order.delivery_status == 'Confirmed' %}
+            <td>
+                <a href="{% url 'order_status_update' order_id=order.order_id status='Delivered' %}" 
+                   class="deliver-btn" 
+                   data-order-id="{{ order.order_id }}">
+                    <button class="btn btn-warning">Delivered</button>
+                </a>
+                <a href="{% url 'order_status_update' order_id=order.order_id status='Cancelled' %}" 
+                   class="cancel-btn ms-2" 
+                   data-order-id="{{ order.order_id }}">
+                    <button class="btn btn-danger">Cancel</button>
+                </a>
+            </td>
+            {% else %}
+            <td>-</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<h4>No Products to Deliver</h4>
+{% endif %}
+
+<a href="{% url 'admin_view_orders' %}">
+    <button class="btn btn-success mt-3">View Orders</button>
+</a>
+
+<!-- SweetAlert2 CSS and JS -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Delivered buttons confirmation with SweetAlert2
+    document.querySelectorAll(".deliver-btn").forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+            e.preventDefault();
+            let orderId = this.getAttribute("data-order-id");
+            let href = this.href;
+
+            Swal.fire({
+                title: `Mark order ${orderId} as Delivered?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Deliver it!',
+                cancelButtonText: 'No, Cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = href;
+                }
+            });
+        });
+    });
+
+    // Cancel buttons confirmation with SweetAlert2
+    document.querySelectorAll(".cancel-btn").forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+            e.preventDefault();
+            let orderId = this.getAttribute("data-order-id");
+            let href = this.href;
+
+            Swal.fire({
+                title: `Cancel order ${orderId}?`,
+                text: "This action cannot be undone.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Cancel it!',
+                cancelButtonText: 'No, Keep it',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = href;
+                }
+            });
+        });
+    });
+});
+</script>
+
+<!-- Toast Notifications -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1055">
+    {% for message in messages %}
+    <div class="toast align-items-center text-white bg-{{ message.tags }} border-0 show mb-2" role="alert">
+        <div class="d-flex">
+            <div class="toast-body">{{ message }}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" 
+                    data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.toast').forEach(function (toastEl) {
+            new bootstrap.Toast(toastEl, { delay: 3000 }).show();
+        });
+    });
+</script>
+{% endblock %}

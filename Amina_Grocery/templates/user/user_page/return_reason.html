@@ -1,0 +1,63 @@
+{% extends 'home/base.html' %}
+{% block content %}
+
+{% if command == "return_product" %} 
+<h2>Return Product</h2>
+<form action="{% url 'return_product' order_id=order_id %}" method="POST">
+    {% csrf_token %}
+    <textarea name="reason" placeholder="Please enter the reason for returning this product" required></textarea>
+    <br>
+    <button type="submit" class="cancel-btn">Submit</button>
+</form>
+{% endif %}
+{% if command == "cancel_order" %}
+<h2>Cancel Order</h2>
+
+<form action="" method="POST">
+    {% csrf_token %}
+    <textarea name="cancel_reason" placeholder="Please enter the reason for canceling this order" required></textarea>
+    <br>
+    <button type="submit" class="cancel-btn">Submit</button>
+</form>
+{% endif %}
+
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<style>
+    h2 {
+        text-align: center;
+    }
+    form {
+        width: 50%;
+        margin: auto;
+        text-align: center;
+    }
+    textarea {
+        width: 100%;
+        height: 100px;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+    .cancel-btn {
+        margin-top: 10px;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #f44336;
+        color: white;
+    }
+    .cancel-btn:hover {
+        background-color: #d32f2f;
+    }
+</style>
+
+{% endblock %}

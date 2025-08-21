@@ -1,0 +1,132 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">Wish-List</h2>
+
+    {% if wish_list %}
+    <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Image</th>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in wish_list %}
+                <tr>
+                    <!-- Product Image -->
+                    <td>
+                        <a href="{% url 'user_product' product=item.product.name %}">
+                            <img src="{{ item.product.image1.url }}" 
+                                 alt="{{ item.product.name }}"
+                                 class="img-fluid rounded"
+                                 style="width: 80px; height: 80px; object-fit: cover;">
+                        </a>
+                    </td>
+
+                    <!-- Product Name -->
+                    <td>
+                        <a href="{% url 'user_product' product=item.product.name %}"
+                           class="text-decoration-none text-dark">
+                            {{ item.product.name }}
+                        </a>
+                    </td>
+
+                    <!-- Product Price -->
+                    <td>
+                        <strong>₹{{ item.product.offer_price|floatformat:2 }}</strong>
+                    </td>
+
+                    <!-- Actions -->
+                    <td>
+                        <!-- Remove from Wishlist -->
+                        <a href="{% url 'remove_wishlist' product_id=item.product.id %}"
+                           class="btn btn-sm btn-danger remove-wishlist"
+                           data-url="{% url 'remove_wishlist' product_id=item.product.id %}">
+                           Remove
+                        </a>
+
+                        <!-- Add to Cart -->
+                        <a href="{% url 'add_to_cart_wishlist' product_id=item.product.id %}" class="ms-2">
+                            <button type="button" class="btn btn-sm btn-success">
+                                Add to Cart
+                            </button>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-center fs-4 text-muted">Your Wish-List is empty!</p>
+    {% endif %}
+</div>
+
+<!-- Toast Messages -->
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-success alert-dismissible fade show toast-message" role="alert">
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+<!-- Styles -->
+<style>
+    .toast-message {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: black;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        z-index: 1000;
+        animation: fadein 0.5s, fadeout 0.5s 3s forwards;
+    }
+    @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeout { from { opacity: 1; } to { opacity: 0; } }
+</style>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Auto-hide toast messages after 3 seconds
+    setTimeout(() => {
+        document.querySelectorAll(".toast-message").forEach(message => {
+            message.style.display = "none";
+        });
+    }, 3000);
+
+    // SweetAlert2 confirmation for wishlist removal
+    document.querySelectorAll(".remove-wishlist").forEach(button => {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();
+            let url = this.getAttribute("data-url");
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "This item will be removed from your wishlist.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, remove it!",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

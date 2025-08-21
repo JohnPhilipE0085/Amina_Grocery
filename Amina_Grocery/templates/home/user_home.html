@@ -1,0 +1,378 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amina Grocery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'css/user/home.css'%}">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg p-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand fw-bold" href="{% url 'user_home' %}">Amina Grocery</a>
+
+            <form action="{% url 'user_search_products' %}" method="POST" class="d-flex w-50">
+                {% csrf_token %}
+                <input type="text" class="form-control me-2" placeholder="Search products" name="search_product">
+                <button class="btn btn-success">Search</button>
+            </form>
+
+            <div class="d-flex align-items-center gap-3">
+                <a href="{% url 'wish_list' %}" class="text-dark"><i class="fas fa-heart fs-5"></i> Wishlist</a>
+                <a href="{% url 'user_cart' %}" class="text-dark"><i class="fas fa-shopping-cart fs-5"></i> Cart</a>
+
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-bs-toggle="dropdown">
+                        Account
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'user_account' %}">Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'user_orders' %}">Orders</a></li>
+                        <li><a class="dropdown-item" href="{% url 'wish_list' %}">Wishlist</a></li>
+                        <li><a class="dropdown-item" href="{% url 'user_cart' %}">Cart</a></li>
+                        <li><a class="dropdown-item" href="{% url 'saved_address' %}">Saved Addresses</a></li>
+                        <li><a class="dropdown-item" href="{% url 'user_wallet' %}">Wallet</a></li>
+                        <li><a class="dropdown-item" href="#">Support</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'user_logout' %}">Log Out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Categories Section with Hover Effect -->
+
+    <div class="container text-center my-3">
+        <div class="d-flex flex-wrap justify-content-center">
+
+            <a href="{% url 'list_products' category=16 %}"><button class="category-btn"> Fruits</button></a>
+            <a href="{% url 'list_products' category=17 %}"><button class="category-btn"> Vegetables</button></a>
+            <a href="{% url 'list_products' category=18 %}"><button class="category-btn"> Grocery Items</button></a>
+            <a href="{% url 'list_products' category=19 %}"><button class="category-btn"> Household Items</button></a>
+            <a href="{% url 'list_products' category=20 %}"><button class="category-btn"> Bakery Items</button></a>
+
+        </div>
+    </div>
+
+    <!-- Banner Image -->
+    <a href="{% url 'list_products' category=17 %}">
+        <div class="container">
+            <img src="{% static 'images/home/banner.jpeg' %}" class="img-fluid w-100" alt="Grocery Banner">
+        </div>
+    </a>
+
+    <br>
+
+    <div class="suggested-section">
+        <h2>Suggested for You</h2>
+        <div class="suggested-container">
+
+            {% for products in suggested %}
+            {% if products.is_in_stock %}
+            <a href="{% url 'user_product' product=products.name %}" style="text-decoration: none; color: inherit;">
+                <div class="suggested-item">
+                    <img src="{{products.image1.url}}" alt="Item 1">
+                    <p>{{products.name}}</p>
+                    <p>Price: <del>₹{{ products.price }}</del><br> <span class="text-danger">₹{{products.offer_price}}</span></p>
+                </div>
+            </a>
+            {% else %}
+            <div class="suggested-item {% if not products.is_in_stock %}out-of-stock{% endif %}">
+                <img src="{{products.image1.url}}" alt="{{products.name}}">
+                {% if not products.is_in_stock %}
+                <div class="out-of-stock-overlay">OUT OF STOCK</div>
+                {% endif %}
+                <p>{{products.name}}</p>
+                <p>
+                    Price: <del>₹{{ products.price }}</del><br>
+                    <span class="text-danger">₹{{ products.offer_price}}</span>
+                </p>
+                {% if not products.is_in_stock %}
+                <div class="out-of-stock-badge">Available Soon</div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+
+        </div>
+    </div>
+
+    <div class="suggested-section">
+        <h2>Fresh Picks</h2>
+        <div class="suggested-container">
+
+            {% for products in fresh_products %}
+            {% if products.is_in_stock %}
+            <a href="{% url 'user_product' product=products.name %}" style="text-decoration: none; color: inherit;">
+                <div class="suggested-item">
+                    <img src="{{products.image1.url}}" alt="Item 1">
+                    <p>{{products.name}}</p>
+                    <p>Price: <del>₹{{ products.price }}</del><br> <span class="text-danger">₹{{products.offer_price}}</span></p>
+                </div>
+            </a>
+            {% else %}
+            <div class="suggested-item {% if not products.is_in_stock %}out-of-stock{% endif %}">
+                <img src="{{products.image1.url}}" alt="{{products.name}}">
+                {% if not products.is_in_stock %}
+                <div class="out-of-stock-overlay">OUT OF STOCK</div>
+                {% endif %}
+                <p>{{products.name}}</p>
+                <p>
+                    Price: <del>₹{{ products.price }}</del><br>
+                    <span class="text-danger">₹{{ products.offer_price}}</span>
+                </p>
+                {% if not products.is_in_stock %}
+                <div class="out-of-stock-badge">Available Soon</div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+
+        </div>
+    </div>
+
+
+    <div class="container mt-5 text-center">
+        <h2 class="mb-4">Categories</h2>
+
+        <div class="row justify-content-center">
+            <div class="category-container">
+                {% for category in category %}
+                <a href="{% url 'list_products' category=category.id %}" class="category-button">
+                    {{ category.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- Hot Deals Section with Hover Effect -->
+    <div class="container my-4">
+        <h3 class="text-center">Today's Hot Deals</h3>
+        <div class="row mt-3">
+            {% for product in offer_products %}
+            <div class="col-6 col-md-3 col-lg-2 mb-2 product-item d-flex justify-content-center">
+                <div class="card text-center shadow-sm" style="width: 100%; max-width: 160px;">
+                    <a href="{% url 'user_product' product=product.name %}">
+                        <img src="{{ product.image1.url }}" class="card-img-top img-fluid p-2" alt="{{ product.name }}"
+                            style="height: 120px; object-fit: contain;">
+                    </a>
+                    <div class="card-body p-2">
+                        <h6 class="card-title text-truncate" style="font-size: 0.85rem;">{{ product.name }}</h6>
+                        <p>Price: <del>₹{{ product.price }}</del> <span class="text-danger">₹{{product.offer_price}}</span></p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+    <!-- Footer -->
+<div class="footer text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <h5>All Categories</h5>
+                <ul class="list-unstyled">
+                    <a href="{% url 'list_products' category=16 %}" style="text-decoration: none; color: white;"><li>Fruits</li></a>
+                    <a href="{% url 'list_products' category=17 %}" style="text-decoration: none; color: white;"><li>Vegetables</li></a>
+                    <a href="{% url 'list_products' category=18 %}" style="text-decoration: none; color: white;"><li>Oils & Spices</li></a>
+                    <a href="{% url 'list_products' category=20 %}" style="text-decoration: none; color: white;"><li>Dairy Products</li></a>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5>Address</h5>
+                <p>
+                    Amina Grocery<br>
+                    123 Market Street<br>
+                    Kochi, Kerala 682001<br>
+                    India
+                </p>
+            </div>
+            <div class="col-md-3">
+                <h5>Customer Account</h5>
+                <ul class="list-unstyled">
+                    <li>My Orders</li>
+                    <li>Track Order</li>
+                    <li>Wishlist</li>
+                    <li>Logout</li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5>Help & Support</h5>
+                <ul class="list-unstyled">
+                    <li>Contact Us</li>
+                    <li>FAQs</li>
+                    <li>Return Policy</li>
+                    <li>Privacy Policy</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <style>
+        .category-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .category-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 120px;
+            /* Adjust size */
+            height: 120px;
+            /* Keep square shape */
+            font-size: 16px;
+            background-color: #edeeef;
+            /* Soft pastel blue */
+            color: #333333;
+            /* Dark gray text */
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: 0.3s;
+            border: 2px solid #9ae7a3;
+            /* Muted blue border */
+        }
+
+        .category-button:hover {
+            background-color: #8ddb8c;
+            /* Slightly darker on hover */
+        }
+
+        /* css for suggested div */
+        .suggested-section {
+            padding: 20px;
+            background-color: #bee5b0;
+            margin: 30px;
+        }
+
+        .suggested-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding: 10px;
+            white-space: nowrap;
+            scrollbar-width: auto;
+            scrollbar-color: #ffffff transparent;
+        }
+
+        .suggested-item {
+            min-width: 150px;
+            width: 180px;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .suggested-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .suggested-item p {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 8px 0;
+        }
+
+        .suggested-item span {
+            font-size: 16px;
+            color: #e60000;
+            font-weight: bold;
+        }
+    </style>
+
+<style>
+    .out-of-stock-link {
+        pointer-events: none;
+        cursor: default;
+        opacity: 0.8;
+    }
+    
+    .out-of-stock {
+        position: relative;
+    }
+    
+    .out-of-stock-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(255, 0, 0, 0.7);
+        color: white;
+        text-align: center;
+        padding: 5px;
+        font-weight: bold;
+    }
+    
+    .out-of-stock img {
+        filter: grayscale(70%);
+    }
+    
+    .out-of-stock-badge {
+        background: #ff4444;
+        color: white;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        display: inline-block;
+        margin-top: 5px;
+    }
+</style>
+
+
+<!-- messages showing bar very important -->
+<!-- Toast Container (Top-Right) -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1055">
+  {% for message in messages %}
+  <div class="toast align-items-center text-white bg-{{ message.tags }} border-0 show mb-2" role="alert">
+    <div class="d-flex">
+      <div class="toast-body">
+        {{ message }}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Bootstrap Toast Auto-Trigger -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+    toastElList.map(function (toastEl) {
+      new bootstrap.Toast(toastEl, { delay: 3000 }).show();
+    });
+  });
+</script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

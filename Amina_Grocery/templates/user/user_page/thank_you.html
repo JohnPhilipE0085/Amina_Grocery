@@ -1,0 +1,47 @@
+{% extends 'home/base.html' %} <!-- Ensure this extends your base template -->
+
+{% block content %}
+<br><br><br><br><br>
+<div class="thank-you">
+    <h1>Thank You!</h1>
+    <p>Your transaction was successful. We appreciate your business.</p>
+    <a href="{% url 'user_home' %}" class="btn">Go to Home</a>
+</div>
+
+
+<style>
+    
+    .thank-you {
+        text-align: center;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+        color: #28a745;
+    }
+    .btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+</style>
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}

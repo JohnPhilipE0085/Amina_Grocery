@@ -1,0 +1,336 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}Home - My Website{% endblock %}
+
+{% block content %}
+<!-- Navbar -->
+
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Product Images -->
+        <div class="col-md-4">
+            <div class="d-flex flex-column">
+
+                <div class="product-container">
+                    <img src="{{ product.image1.url }}" class="main-image" id="mainImage">
+                    <div class="zoom-box" id="zoomBox"></div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <div class="thumbnail"><img src="{{ product.image1.url }}" alt="Thumb"></div>
+                    {% if product.image2 %}
+                    <div class="thumbnail"><img src="{{ product.image2.url }}" alt="Thumb"></div>
+                    {% endif %}
+                    {% if product.image3 %}
+                    <div class="thumbnail"><img src="{{ product.image3.url }}" alt="Thumb"></div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="col-md-8">
+            <h4>{{product.name}}</h4>
+            <div class="rating">
+                
+                {% if rating %}
+                ⭐ <span>{{rating}}</span>
+                {% else %}
+                ⭐ <span>No Ratings Yet</span>
+                {% endif %}
+            </div><br><br>
+            <p><strong>M.R.P:</strong> ₹ {{ product.offer_price }}
+                {% if product.category == "Fruits" or product.category == "Vegetables" %}/kg
+                {% elif product.category == "Bakery" %} per packet
+                {% endif %}
+                (Incl. of all taxes)
+            </p>
+
+            <p><strong>Delivery to:</strong> Thrissur - 680613</p>
+            {% if product.is_in_stock %}
+            <p><strong>Status:</strong> In Stock</p>
+            <p><strong>Sold by:</strong> Amina Grocery</p>
+            {% if wish_list %}
+            <a href="{% url 'wish_list' %}"><button class="wishlist-btn" data-product-id="{{ product.id }}">In Wishlist</button></a> 
+            {% else %}
+            <a href="{% url 'add_to_wishlist' product_id=product.id %}"><button class="wishlist-btn" data-product-id="{{ product.id }}">Save Item</button></a> 
+            {% endif %}
+            <a href="{% url 'add_to_cart' product_id=product.id %}"><button class="add-to-cart">ADD TO CART</button></a>
+        
+            {% else %}
+            <p><strong>Status:</strong> Out of Stock</p>
+            <p><strong>Sold by:</strong> Amina Grocery</p>
+            <button class="btn btn-danger">Add to Wishlist</button>
+            <button class="btn btn-danger">Out of Stock</button>
+            {% endif %}
+            <br><br>
+            <form method="POST" action="{% url 'product_variant' %}">
+                {% csrf_token %}
+                <label for="variantSelect"><strong>Select Variant:</strong></label>
+                <select name="variant_name" id="variantSelect" onchange="this.form.submit()" class="form-select w-50 mb-3">
+                    <option value="{{ product.name }}" selected>{{ product.name }} - ₹{{ product.offer_price }}</option>
+                    {% for variant in variants %}
+                    <option value="{{ variant.name }}">{{ variant.name }} - ₹{{ variant.offer_price }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+            </div>
+    </div>
+
+    <hr>
+
+    <!-- Description -->
+    <div class="mt-3">
+        <h5>Description</h5>
+        <p>
+            {{product.description}}
+        </p>
+        <p><strong>Disclaimer:</strong> Despite our attempts to provide you with the most accurate
+            information possible, the actual packaging, ingredients, and color of the product may sometimes vary.
+        </p>
+    </div>
+
+    <hr>
+
+
+<!-- Reviews Section -->
+<div class="mt-4">
+    <h5 class="fw-bold">Customer Reviews</h5>
+    
+    {% if reviews %}
+        {% for review in reviews %}
+            <div class="card mb-3 p-3 shadow-sm">
+                {% if review.rating %}
+                    <p>⭐ {{ review.rating }}  {{ review.review }}</p>
+                    {% else %}
+                    {{ review.review }}
+                    {% endif %}
+                <small class="text-muted">Reviewed by: {{ review.user.username }} &nbsp;&nbsp;&nbsp;    Date: {{review.updated_at}}</small>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No reviews yet. Be the first to review!</p>
+    {% endif %}
+</div>
+
+
+
+    <!-- Frequently Bought Together -->
+    <div class="mt-4">
+        <h5 class="fw-bold">Frequently Bought Together</h5>
+        <div class="row d-flex flex-wrap gap-3">
+            {% for product in R_Products %}
+            <div class="col-md-2 frequently-bought card border-0 shadow-sm p-2 text-center">
+                <a href="{% url 'r_product' product=product.id %}" style="text-decoration: none; color: inherit;">
+                    <img src="{{ product.image1.url }}" alt="Product" class="img-fluid rounded" style="max-height: 120px; object-fit: contain;">
+                    <p class="mt-2 mb-0 fw-semibold">{{ product.name }}</p>
+                    <p class="text-success fw-bold">₹ {{ product.offer_price }}</p>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <br>
+
+</div>
+{% if messages %}
+    <div id="popup-message-container">
+        {% for message in messages %}
+            <div class="popup-message {% if message.tags %}{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<style>
+    .product-card img {
+        width: 100%;
+        border-radius: 5px;
+    }
+
+    .thumbnail img {
+        width: 60px;
+        height: 60px;
+        cursor: pointer;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .thumbnail img:hover {
+        border: 2px solid green;
+    }
+
+    .add-to-cart {
+        background-color: #6cbf53;
+        color: white;
+        font-weight: bold;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
+
+    .add-to-cart:hover {
+        background-color: #5aa942;
+    }
+
+    .frequently-bought img {
+        width: 100px;
+        border-radius: 5px;
+        background-color: white;
+    }
+
+    .rating span {
+        color: rgb(0, 0, 0);
+    }
+
+    /* image zooming */
+    .product-container {
+        position: relative;
+        width: 300px;
+        margin-right: 30px;
+        margin-bottom: 30px;
+    }
+
+    .main-image {
+        width: 100%;
+        cursor: zoom-in;
+    }
+
+    .zoom-box {
+        position: absolute;
+        display: none;
+        width: 200px;
+        /* Size of the zoomed view */
+        height: 200px;
+        border: 2px solid #ddd;
+        overflow: hidden;
+        background-repeat: no-repeat;
+        background-size: 200% 200%;
+        pointer-events: none;
+    }
+</style>
+
+<style>
+    #popup-message-container {
+    position: fixed;
+    top: 20px;
+    right: -300px; /* Initially hidden */
+    width: 250px;
+    z-index: 1000;
+}
+
+.popup-message {
+    background-color: #28a745; /* Green success color */
+    color: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: right 0.5s ease-in-out;
+    position: relative;
+    right: 0;
+}
+
+.popup-message.error {
+    background-color: #dc3545; /* Red error color */
+}
+
+.popup-message.warning {
+    background-color: #ffc107; /* Yellow warning color */
+}
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let popupMessages = document.querySelectorAll(".popup-message");
+        
+        popupMessages.forEach((message) => {
+            // Slide in from right
+            document.getElementById("popup-message-container").style.right = "20px";
+
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                message.style.opacity = "0";
+                setTimeout(() => {
+                    message.remove();
+                }, 500); // Wait for fade-out effect
+            }, 3000);
+        });
+    });
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const mainImage = document.querySelector(".main-image");
+        const thumbnails = document.querySelectorAll(".thumbnail img");
+
+        thumbnails.forEach(thumbnail => {
+            thumbnail.addEventListener("click", function () {
+                mainImage.src = this.src;
+            });
+        });
+    });
+
+    // for image_zomming
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const mainImage = document.getElementById("mainImage");
+        const zoomBox = document.getElementById("zoomBox");
+
+        mainImage.addEventListener("mousemove", function (event) {
+            const { left, top, width, height } = mainImage.getBoundingClientRect();
+            const x = (event.clientX - left) / width * 100;
+            const y = (event.clientY - top) / height * 100;
+
+            zoomBox.style.display = "block";
+            zoomBox.style.left = `${event.clientX - left - 100}px`;
+            zoomBox.style.top = `${event.clientY - top - 100}px`;
+            zoomBox.style.backgroundImage = `url(${mainImage.src})`;
+            zoomBox.style.backgroundPosition = `${x}% ${y}%`;
+        });
+
+        mainImage.addEventListener("mouseleave", function () {
+            zoomBox.style.display = "none";
+        });
+    });
+
+
+</script>
+
+<style>
+    .wishlist-btn {
+        background-color: #6cbf53;
+        color: white;
+        font-weight: bold;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+}
+
+.wishlist-btn:hover {
+    background-color: #4CAF50; /* Green background on hover */
+    color: white; /* White text on hover */
+}
+
+</style>
+<style>
+.rating {
+    display: inline-flex;
+    align-items: center;
+    background: #fff;          /* White background to pop against green */
+    color: #333;               /* Dark text for contrast */
+    padding: 6px 12px;         /* Some breathing space */
+    border-radius: 12px;       /* Rounded corners */
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Subtle shadow */
+}
+.rating span {
+    margin-left: 6px;          /* space after the star */
+    font-size: 14px;
+}
+
+</style>
+{% endblock%}

@@ -1,0 +1,44 @@
+{% extends 'admin/admin_base.html' %}
+
+{% load static %}
+
+{% block title %}admin_dashboard{% endblock %}
+
+{% block content %}
+
+<section id="products" class="py-5">
+    <div class="container">
+        <h2 class="text-center">Offer Zone Products</h2>
+        
+        {% if messages %}
+        {% for message in messages %}
+        <p style="color: rgb(47, 152, 45);">{{ message }}</p>
+        {% endfor %}
+        {% endif %}
+
+        <div class="row mt-4">
+            {% if products %}
+            {% for product in products %}
+            <div class="col-6 col-md-4 col-lg-3 mb-3 product-item d-flex justify-content-center">
+                <div class="card text-center">
+                    <a href="{% url 'product'  product.id  %}">
+                        <img src="{{ product.image1.url }}" class="card-img-top" alt="{{ product.name }}">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p>Price:₹{{product.offer_price}}</p>
+                        <p>stock:{{product.stock}}kg</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+
+            <h4 style="margin-top: 15px;">No Products added</h4>
+            {% endif %}
+        </div>
+    </div>
+</section>
+<a href="{% url 'add_offer' %}"><button class="btn btn-success">Edit offer Zone</button></a>
+
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'home/base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4>My Wallet</h4>
+                </div>
+                <div class="card-body text-center">
+                    <h5>Wallet Balance:</h5>
+                    <h2 class="text-success fw-bold">₹{{ wallet_amount }}</h2>
+
+                    <hr>
+
+                    <h5>Your Referral Code:</h5>
+                    <div class="alert alert-info fw-bold">{{ referral_code }}</div>
+                    <p class="text-muted">Share this code. You’ll earn <span class="text-success fw-bold">₹250</span> when someone registers using your referral!</p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4>Wallet History</h4>
+                </div>
+                <div class="card-body">
+                    {% if wallet_history %}
+                        <table class="table table-bordered table-striped text-center">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Amount (₹)</th>
+                                    <th>Reason</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for w in wallet_history %}
+                                <tr>
+                                    <td>{{ w.order_id }}</td>
+                                    <td>{{ w.amount }}</td>
+                                    <td>{{ w.reason }}</td>
+                                    <td>{{ w.time|date:"d-m-Y H:i" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-center text-muted">No wallet history available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% endblock %}

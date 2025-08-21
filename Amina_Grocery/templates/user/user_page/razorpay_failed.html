@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment Failed</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      padding: 50px;
+      background-color: #fef2f2;
+      color: #b91c1c;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      font-size: 32px;
+    }
+
+    p {
+      font-size: 18px;
+      margin-bottom: 30px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      margin: 10px;
+      font-size: 16px;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .back-btn {
+      background-color: #e5e7eb;
+      color: #111827;
+      border: none;
+    }
+
+    .back-btn:hover {
+      background-color: #d1d5db;
+    }
+
+    .pay-again-btn {
+      background-color: #dc2626;
+      color: white;
+      border: none;
+    }
+
+    .pay-again-btn:hover {
+      background-color: #b91c1c;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>❌ Payment Failed</h2>
+    <p>Your payment could not be processed. Please try again.</p>
+    
+    <a href="{% url 'user_home' %}" class="btn back-btn">⬅ Go Back to Home Page</a>
+    <a href="{% url 'confirm_order' %}" class="btn pay-again-btn">🔁 Pay Again</a>
+  </div>
+</body>
+</html>

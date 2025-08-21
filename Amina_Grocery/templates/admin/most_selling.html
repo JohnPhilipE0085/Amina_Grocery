@@ -1,0 +1,37 @@
+{% extends 'admin/admin_base.html' %}
+{% block content %}
+<h3>Most Selling Products</h3>
+<canvas id="salesChart" width="400" height="200"></canvas>
+
+<!-- Safely embed JSON data for JavaScript -->
+{{ labels|json_script:"labels-data" }}
+{{ data|json_script:"sales-data" }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    const labels = JSON.parse(document.getElementById('labels-data').textContent);
+    const salesData = JSON.parse(document.getElementById('sales-data').textContent);
+    const salesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels, // product names
+            datasets: [{
+                label: 'Quantity Sold',
+                data: salesData,   // total sold
+                backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

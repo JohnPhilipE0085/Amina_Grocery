@@ -1,0 +1,133 @@
+{% extends 'admin/admin_base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Edit Product</h2>
+
+    <!-- Product Images -->
+    <div class="row mb-4">
+        {% if products.image1 %}
+        <div class="col-md-4">
+            <img src="{{ products.image1.url }}" class="img-fluid rounded shadow-sm" alt="Product Image 1">
+        </div>
+        {% endif %}
+        {% if products.image2 %}
+        <div class="col-md-4">
+            <img src="{{ products.image2.url }}" class="img-fluid rounded shadow-sm" alt="Product Image 2">
+        </div>
+        {% endif %}
+        {% if products.image3 %}
+        <div class="col-md-4">
+            <img src="{{ products.image3.url }}" class="img-fluid rounded shadow-sm" alt="Product Image 3">
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Product Details -->
+    <div class="card shadow-sm p-4 mb-4">
+        <h4 class="card-title mb-4">Product Details</h4>
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <strong>Product ID:</strong> <span class="text-muted"><strong>{{ products.id }}</strong></span>
+            </div>
+            <div class="col-md-3">
+                <strong>Name:</strong> <span class="text-dark">{{ products.name }}</span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <strong>Description:</strong>
+                <p class="text-secondary mb-0">{{ products.description }}</p>
+            </div>
+        </div>
+
+        <div class="row mb-3 align-items-center">
+            <div class="col-md-4">
+                <strong>Price:</strong>
+                <span class="text-danger fw-semibold">₹{{ products.price }}</span>
+            </div>
+            <div class="col-md-4">
+                <strong>Offer Price:</strong>
+                <span class="badge bg-success fs-6">₹{{ products.offer_price }}</span>
+            </div>
+            <div class="col-md-4">
+                <strong>Stock:</strong>
+                {% if products.stock > 0 %}
+                    <span class="badge bg-primary fs-6">{{ products.stock }} Available</span>
+                {% else %}
+                    <span class="badge bg-danger fs-6">Out of Stock</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <strong>Category:</strong> <span class="text-muted">{{ products.category }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="mt-4 d-flex justify-content-start gap-3">
+        <a href="{% url 'edit_product_option' product_id=products.id %}">
+            <button class="btn btn-warning">Edit Product</button>
+        </a>
+
+        {% if products.is_in_stock %}
+        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
+            Delete Product
+        </button>
+        {% else %}
+        <a href="{% url 'activate_product' %}">
+            <button class="btn btn-success">Activate Product</button>
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Deletion</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete the product <strong>{{ products.name }}</strong>?  
+        This action cannot be undone.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <a href="{% url 'delete_product' %}" class="btn btn-danger">Yes, Delete</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1055">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="toast align-items-center text-white bg-success border-0 show mb-2" role="alert">
+        <div class="d-flex">
+          <div class="toast-body">
+            {{ message }}
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>
+    {% endfor %}
+  {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

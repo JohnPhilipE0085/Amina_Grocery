@@ -1,0 +1,68 @@
+{% extends 'admin/admin_base.html' %}
+{% load static %}
+
+{% block title %}Order Details - {{ order.order_id }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Order Details</h2>
+
+    <!-- Order Summary Card -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            Order #{{ order.order_id }}
+        </div>
+        <div class="card-body">
+            <p><strong>User:</strong> {{ order.user.username }} ({{ order.user.email }})</p>
+            <p><strong>Product:</strong> {{ order.product.name }}</p>
+            <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+            <p><strong>Price:</strong> ₹{{ order.price }}</p>
+            <p><strong>Total Price:</strong> ₹{{ order.total_price }}</p>
+            {% if order.discount_price %}
+                <p><strong>Discount Price:</strong> ₹{{ order.discount_price }}</p>
+            {% endif %}
+            {% if order.coupon %}
+                <p><strong>Coupon:</strong> {{ order.coupon.code }}</p>
+            {% endif %}
+            <p><strong>Payment Method:</strong> {{ order.payment_option|title }}</p>
+            <p><strong>Delivery Status:</strong>
+                <span class="badge 
+                    {% if order.delivery_status == 'Confirmed' %}bg-info
+                    {% elif order.delivery_status == 'Shipped' %}bg-warning
+                    {% elif order.delivery_status == 'Delivered' %}bg-success
+                    {% elif order.delivery_status == 'Cancelled' %}bg-danger
+                    {% elif order.delivery_status == 'Returned' %}bg-secondary
+                    {% endif %}
+                ">
+                    {{ order.delivery_status }}
+                </span>
+            </p>
+            <p><strong>Order Created:</strong> {{ order.created_at|date:"Y-m-d H:i" }}</p>
+            <p><strong>Last Updated:</strong> {{ order.updated_at|date:"Y-m-d H:i" }}</p>
+        </div>
+    </div>
+
+    <!-- Address Card -->
+    {% if order.address %}
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-secondary text-white">
+            Shipping Address
+        </div>
+        <div class="card-body">
+            <p><strong>Name:</strong> {{ order.address.full_name }}</p>
+            <p><strong>House No:</strong> {{ order.address.house_no }}</p>
+            <p><strong>Place:</strong> {{ order.address.place }}</p>
+            <p><strong>City:</strong> {{ order.address.city }}</p>
+            <p><strong>Landmark:</strong> {{ order.address.land_mark }}</p>
+            <p><strong>Pincode:</strong> {{ order.address.pincode }}</p>
+            <p><strong>Phone No:</strong> {{ order.address.phone_no }}</p>
+        </div>
+    </div>
+    {% else %}
+        <div class="alert alert-warning">No address found for this order.</div>
+    {% endif %}
+
+    <!-- Back Button -->
+    <a href="{% url 'admin_orders' %}" class="btn btn-outline-primary">← Back to Orders</a>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+virtual_env/
+
+# Environment variables
+.env
+
+# Django specific
+/staticfiles/
+/media/
+/db.sqlite3
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,24 @@
+{% extends 'admin/admin_base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">User Delivery Details</h2>
+
+    <div class="card shadow-sm p-4">
+        <h4>Delivery Address</h4>
+        <hr>
+        <p><strong>Name:</strong> {{ details.address.full_name }}</p>
+        <p><strong>Phone:</strong> {{ details.address.house_no }}</p>
+        <p><strong>Email:</strong> {{ details.address.phone_no }}</p>
+        <p><strong>Address:</strong> {{ details.address.pincode }}</p>
+        <p><strong>City:</strong> {{ details.address.city }}</p>
+        <p><strong>State:</strong> {{ details.address.place }}</p>
+        <p><strong>ZIP Code:</strong> {{ details.address.land_mark }}</p>
+        <a href="{% url 'admin_orders' %}"><button class="btn btn-success">Return</button></a>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,270 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="checkout-container">
+    <h2 class="checkout-title">Checkout</h2>
+    <form action="{% url 'confirm_order' %}" method="POST">
+        {% csrf_token %}
+        <div class="checkout-grid">
+            <!-- Left Side: Products List -->
+            <div class="products-section">
+                <h3>Products</h3>
+                <div class="products-grid">
+                    {% for product in products %}
+                    <a href="{% url 'user_product' product=product.product.name %}" class="text-decoration-none">
+                        <div class="product-card">
+                            <img src="{{ product.product.image1.url }}" alt="{{ product.product.name }}">
+                            <div class="product-info">
+                                <p class="product-name">{{ product.product.name }} x{{ product.quantity }}</p>
+                                <p class="product-price">₹{{ product.product.offer_price }}</p>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            <!-- Right Side: Address & Order Summary -->
+            <div class="summary-section">
+                <h3>Select Address</h3>
+                <div class="row">
+                    {% for address in address %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card shadow-sm p-3 mb-4 bg-white rounded border">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-2">
+                                    <input type="radio" name="selected_address" value="{{ address.id }}" {% if forloop.first %}checked{% endif %} class="me-2">
+                                    <h5 class="card-title m-0">{{ address.full_name }}</h5>
+                                </div>
+                                <p class="card-text">
+                                    <strong>Phone No:</strong> {{ address.phone_no }}<br>
+                                    <strong>House No:</strong> {{ address.house_no }}<br>
+                                    <strong>Landmark:</strong> {{ address.land_mark }}<br>
+                                    <strong>Place:</strong> {{ address.place }}<br>
+                                    <strong>Pincode:</strong> {{ address.pincode }}<br>
+                                    <strong>City:</strong> {{ address.city }}<br>
+                                </p>
+
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <a href="{% url 'address_addon' %}" class="btn btn-primary mt-3">+ Add New Address</a>
+
+                <hr>
+
+                <div class="order-summary">
+                    <h3>Order Summary</h3>
+                    <p>Actual Price: ₹{{ mrp_price }}</p>
+                    <p>Discount: -₹{{ discount }}</p>
+                    <p>Coupon Discount: -₹{{ coupon_offer }}</p>
+                    <p class="total-price"><strong>Total: ₹{{ grand_total }}</strong></p>
+                    <hr>
+
+                    <!-- Payment Method Selection -->
+                    <div class="payment-method">
+                        <h4>Select Payment Method</h4>
+                        <label>
+                            <input type="radio" name="payment_method" value="wallet_pay" checked>
+                            Wallet Pay
+                        </label>
+                        <br>
+                        <label>
+                            <input type="radio" name="payment_method" value="razorpay" checked>
+                            Online Payment (Razorpay)
+                        </label>
+                        <br>
+                        <label>
+                            <input type="radio" name="payment_method" value="cod">
+                            Cash on Delivery (COD)
+                        </label>
+                    </div>
+
+                    <button type="submit" class="checkout-btn" onclick="processPayment()">Proceed to Pay</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% if messages %}
+  <div id="message-box" class="message-box">
+    {% for message in messages %}
+      <div class="message {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<!-- style for message bar -->
+<style>
+.message-box {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+.message {
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  color: #fff;
+  text-align: center;
+  min-width: 300px;
+}
+
+.message.error {
+  background-color: #f44336;
+}
+
+.message.success {
+  background-color: #4CAF50;
+}
+
+.message.info {
+  background-color: #2196F3;
+}
+
+.message.warning {
+  background-color: #ff9800;
+}
+</style>
+
+<!-- script for message bar -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var messages = document.querySelectorAll('.message');
+      messages.forEach(function(message) {
+        setTimeout(function() {
+          message.style.display = 'none';
+        }, 5000); // Adjust time as needed
+      });
+    });
+</script>
+  
+
+<style>
+    .checkout-container {
+        max-width: 1200px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .checkout-title {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .checkout-grid {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .products-section,
+    .summary-section {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        flex: 1;
+        min-width: 350px;
+    }
+
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+    }
+
+    .product-card {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 8px;
+        background: #f9f9f9;
+    }
+
+    .product-card img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .product-info p {
+        margin: 0;
+    }
+
+    .product-name {
+        font-weight: bold;
+    }
+
+    .product-price {
+        color: green;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .col-md-6,
+    .col-lg-4 {
+        flex: 1 1 calc(33.333% - 15px);
+        min-width: 250px;
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 200px;
+    }
+
+    .d-flex.align-items-center {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    input[type="radio"] {
+        transform: scale(1.2);
+        cursor: pointer;
+    }
+
+    .checkout-btn {
+        background: #28a745;
+        color: white;
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .payment-method {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+    }
+
+    .payment-method label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
+
+
+
+{% endblock %}

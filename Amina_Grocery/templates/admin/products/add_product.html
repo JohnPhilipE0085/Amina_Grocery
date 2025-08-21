@@ -1,0 +1,103 @@
+{% extends 'admin/admin_base.html' %}
+{% load static %}
+
+{% block title %}Add Product{% endblock %}
+
+{% block extrahead %}
+<!-- Cropper CSS -->
+<link href="https://unpkg.com/cropperjs/dist/cropper.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg p-4 bg-light">
+        <h2 class="text-primary mb-4">Add Product</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            {% for field in form %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
+
+                {% if field.name == 'image1' %}
+                    {{ field }}
+                    <img id="preview-image1" style="max-width: 100%; display: none; margin-top: 10px;" />
+                    <input type="hidden" name="cropped_image1" id="cropped_image1">
+
+                {% elif field.name == 'image2' %}
+                    {{ field }}
+                    <img id="preview-image2" style="max-width: 100%; display: none; margin-top: 10px;" />
+                    <input type="hidden" name="cropped_image2" id="cropped_image2">
+
+                {% elif field.name == 'image3' %}
+                    {{ field }}
+                    <img id="preview-image3" style="max-width: 100%; display: none; margin-top: 10px;" />
+                    <input type="hidden" name="cropped_image3" id="cropped_image3">
+
+                {% else %}
+                    {{ field }}
+                {% endif %}
+
+                {% if field.errors %}
+                    <div class="text-danger small">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-success w-100">Add Product</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrascript %}
+<!-- Cropper JS -->
+<script src="https://unpkg.com/cropperjs/dist/cropper.min.js"></script>
+<script>
+function setupCropper(imageFieldName, previewId, hiddenId, cropperVarName) {
+    const input = document.querySelector(`input[name="${imageFieldName}"]`);
+    const preview = document.getElementById(previewId);
+    const hiddenInput = document.getElementById(hiddenId);
+
+    input.addEventListener("change", function () {
+        const file = this.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+            preview.style.display = "block";
+
+            if (window[cropperVarName]) {
+                window[cropperVarName].destroy();
+            }
+
+            window[cropperVarName] = new Cropper(preview, {
+                viewMode: 1,
+                autoCrop: false
+            });
+        };
+        reader.readAsDataURL(file);
+    });
+
+    document.querySelector("form").addEventListener("submit", function (e) {
+        if (window[cropperVarName]) {
+            const canvas = window[cropperVarName].getCroppedCanvas();
+            if (canvas) {
+                hiddenInput.value = canvas.toDataURL("image/jpeg");
+            }
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    setupCropper("image1", "preview-image1", "cropped_image1", "cropper1");
+    setupCropper("image2", "preview-image2", "cropped_image2", "cropper2");
+    setupCropper("image3", "preview-image3", "cropped_image3", "cropper3");
+});
+</script>
+{% endblock %}

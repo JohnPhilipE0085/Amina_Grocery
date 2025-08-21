@@ -1,0 +1,76 @@
+{% extends 'admin/admin_base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2 class="text-center">Add New Coupon</h2>
+        <form action="{% url 'add_coupon' %}" method="POST" class="mt-4">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="coupon_code" class="form-label">Coupon Code</label>
+                <input type="text" class="form-control" id="coupon_code" name="coupon_code" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="discount" class="form-label">Discount Percentage</label>
+                <input type="number" class="form-control" id="discount" name="discount" required min="1" max="100">
+            </div>
+            
+            <div class="mb-3">
+                <label for="min_order_price" class="form-label">₹Minimum Order Price</label>
+                <input type="number" class="form-control" id="min_order_price" name="min_order_price" required min="1">
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Status</label>
+                <div>
+                    <input type="radio" id="active" name="status" value="True" required>
+                    <label for="active">Active</label>
+                    <input type="radio" id="inactive" name="status" value="False" required>
+                    <label for="inactive">Inactive</label>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Add Coupon</button>
+        </form>
+    </div>
+    {% if messages %}
+  <div class="msg-container">
+    {% for message in messages %}
+      <div class="msg-bar {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+<style>
+    .msg-container {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      width: auto;
+      max-width: 90%;
+    }
+  
+    .msg-bar {
+      padding: 12px 20px;
+      background-color: #f44336; /* red for error */
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      animation: fadeinout 3s ease forwards;
+    }
+  
+    @keyframes fadeinout {
+      0% {opacity: 0; top: 0;}
+      10% {opacity: 1; top: 20px;}
+      90% {opacity: 1;}
+      100% {opacity: 0; top: 0;}
+    }
+  </style>
+  
+{% endblock%}
