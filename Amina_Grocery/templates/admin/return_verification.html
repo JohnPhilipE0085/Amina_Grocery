@@ -50,7 +50,12 @@
         <p><strong>Price:</strong> ₹{{ product.order.price }}</p>
         <p><strong>Payment:</strong> {{ product.order.payment_option }}</p>
         <p><strong>Reason:</strong> {{ product.reason }}</p>
-    </div>
+        {% if product.images %}
+        <img src="{{ product.images.url }}"  width="200">
+        {% else %}
+            <p>No image available</p>
+        {% endif %}
+            </div>
 
     <div class="action-buttons">
         <a href="{% url 'Reject_return' order_id=product.order.order_id %}"

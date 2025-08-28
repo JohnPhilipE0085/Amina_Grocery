@@ -61,4 +61,4 @@ class ReturnProduct(models.Model):
     reason=models.TextField()
     status = models.CharField(max_length=20, choices=[('Requested', 'Requested'), ('Approved', 'Approved'), ('Rejected', 'Rejected'), ('Refunded', 'Refunded')], default='Requested')
     created_at=models.DateTimeField(auto_now_add=True)
-
+    images=models.ImageField(upload_to='return_image/',blank=True,null=True)

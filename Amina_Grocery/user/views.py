@@ -269,7 +269,7 @@ def user_home(request):
     offer_products=Product.objects.filter(offer_point=True,is_in_stock=True,variant_quantity=1)
     category=categories.objects.filter(is_active=True)
     suggested=Product.objects.filter(is_in_stock=True,variant_quantity=1)[:7]
-    Fresh_products=Product.objects.filter(Q(category=17,is_in_stock=True,variant_quantity=1)|Q(is_in_stock=True,variant_quantity=1,category=16))
+    Fresh_products=Product.objects.filter(Q(category=3,is_in_stock=True,variant_quantity=1)|Q(is_in_stock=True,variant_quantity=1,category=1))
     context={
         "offer_products":offer_products,
         "category":category,

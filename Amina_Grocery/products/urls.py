@@ -21,7 +21,6 @@ urlpatterns = [
     path('edit_category/',views.edit_category,name='edit_category'),
 ]
 
-# Append media URL configuration correctly
-if settings.DEBUG:  
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+if settings.DEBUG:  # serve media files only in development
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

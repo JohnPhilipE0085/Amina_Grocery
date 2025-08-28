@@ -343,9 +343,6 @@ def coupon(request):
     paginator = Paginator(coupons, 5) 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    print(coupons)
-    print("Coupons count:", coupons.count())
-    print("Page obj length:", len(page_obj))
     context = {
         'page_obj': page_obj,
     }
@@ -439,7 +436,6 @@ def add_category_offer(request):
             return redirect('add_category_offer')
 
         except Exception as e:
-            print("Error in processing category offer:", e)
             messages.error(request, "Failed to apply category offer.")
 
     # GET section
@@ -469,7 +465,6 @@ def delete_category_offer(request, offer_id):
 @staff_login_required
 def user_related_order_details(request,order_id):
     order = Orders.objects.get(order_id=order_id)
-    print(order_id)
     return render(request, 'admin/order_detailed_details.html', {'order': order})
 
 

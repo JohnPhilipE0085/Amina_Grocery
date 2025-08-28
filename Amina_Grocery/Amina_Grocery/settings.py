@@ -30,7 +30,10 @@ SECRET_KEY = 'django-insecure-b17gm4h*b+bh$ou=t5re#9zv+wfr3_-2c9ysqloojxzcryz!oi
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["aminagrocery.shop",
+    "www.aminagrocery.shop",
+    "localhost",
+    "127.0.0.1"]
 
 # Application definition
 
@@ -140,11 +143,13 @@ USE_TZ = True
 
 
 
-
-STATIC_URL = '/static/'  # URL prefix for static files
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),  # Folder where you keep static files
+    os.path.join(BASE_DIR, "static"),
 ]
+
+# Add this line for production
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

@@ -158,7 +158,7 @@ def coupon_add(request):
                 request.session['coupon']=0
                 return redirect('user_cart')
         except:
-            print(coupon)
+            pass
         request.session['coupon']=coupon
         messages.success(request,'Coupon applied successfully')
     return redirect('user_cart')
@@ -258,7 +258,6 @@ def confirm_order(request):
             user_profile.save()
             p_method = 'wallet_pay'
 
-# fuc***up
         elif payment_method == 'razorpay':
             amount = int(grand_total * 100)
             # Create a Razorpay Order
@@ -290,28 +289,6 @@ def confirm_order(request):
         messages.success(request, 'Order Placed Successfully...')
         return render(request, 'user/user_page/thank_you.html')
 
-# @login_required(login_url="user_login")
-# def payment_success(request):
-#     try:
-#         coupon = request.session.get('coupon')
-#         coupon_no = Coupons.objects.get(coupon_no=coupon)
-#         coupon_discount = coupon_no.discount_percentage
-#     except:
-#         coupon_discount = 0
-
-#     user = request.user
-#     selected_address_id = request.session.get("address_id")
-
-#     try:
-#         user_address = address.objects.get(id=selected_address_id)
-#     except address.DoesNotExist:
-#         messages.error(request, "Invalid address selection.")
-#         return redirect('some_error_page')
-
-#     create_order(user, user_address, coupon_discount, 'razorpay')
-
-#     payment_id = request.GET.get('payment_id')
-#     return render(request, 'user/user_page/razorpay_success.html', {'payment_id': payment_id})
 
 def create_order(user, selected_address, coupon_discount, payment_method):
     cart_id = random.randint(1000, 10000) * random.randint(1, 10000)
@@ -384,11 +361,10 @@ def return_product(request,order_id):
 
     if request.method=="POST":
         reason = request.POST.get("reason")
-        
+        image = request.FILES.get('image')
         order=Orders.objects.get(order_id=order_id)
-
         
-        ReturnProduct.objects.create(order=order, reason=reason)
+        ReturnProduct.objects.create(order=order, reason=reason, images=image)
         order.delivery_status = "Requested"
         order.save()
         return redirect('user_orders')
@@ -668,53 +644,11 @@ def delete_review(request,order_id):
 
 # payment/views.py
 
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponseBadRequest
-from django.db.models import Sum, F
-from .models import Cart, Coupons # Make sure to import your models
-from django.contrib.auth.decorators import login_required
-import razorpay
-import logging
-
-# It's a good practice to set up a logger
-logger = logging.getLogger(__name__)
-
-# Assume your razorpay_client is configured, e.g., in the same file or imported
-# from django.conf import settings
-# razorpay_client = razorpay.Client(auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
-
-@login_required
-@csrf_exempt
-def paymenthandler(request):
-
-    currency = 'INR'
-    amount = 20000  # Rs. 200
-
-    # Create a Razorpay Order
-    razorpay_order = client.order.create(dict(amount=amount,
-                                                       currency=currency,
-                                                       payment_capture='0'))
-
-    # order id of newly created order.
-    razorpay_order_id = razorpay_order['id']
-    callback_url = 'paymenthandler/'
-
-    # we need to pass these details to frontend.
-    context = {}
-    context['razorpay_order_id'] = razorpay_order_id
-    context['razorpay_merchant_key'] = settings.RAZOR_KEY_ID
-    context['razorpay_amount'] = amount
-    context['currency'] = currency
-    context['callback_url'] = callback_url
-
-    return render(request, 'index.html', context=context)
-
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseBadRequest
 from django.shortcuts import render
 from razorpay.errors import SignatureVerificationError
-#fuc***ed
+
 @csrf_exempt
 def paymenthandler(request):
     user = request.user
@@ -756,7 +690,6 @@ def paymenthandler(request):
 
         except Exception as e:
             # Log unexpected errors
-            print("❌ Razorpay verification error:", e)
             return HttpResponseBadRequest("Something went wrong")
     else:
         return HttpResponseBadRequest("Only POST request is allowed")

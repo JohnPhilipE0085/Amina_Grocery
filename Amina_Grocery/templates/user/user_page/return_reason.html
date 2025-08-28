@@ -3,13 +3,19 @@
 
 {% if command == "return_product" %} 
 <h2>Return Product</h2>
-<form action="{% url 'return_product' order_id=order_id %}" method="POST">
+<form action="{% url 'return_product' order_id=order_id %}" method="POST"  enctype="multipart/form-data">
     {% csrf_token %}
     <textarea name="reason" placeholder="Please enter the reason for returning this product" required></textarea>
     <br>
+    <label for="image">Product Image</label>
+    <input type="file" name="image" id="image" required><br>
+
     <button type="submit" class="cancel-btn">Submit</button>
 </form>
 {% endif %}
+
+
+
 {% if command == "cancel_order" %}
 <h2>Cancel Order</h2>
 

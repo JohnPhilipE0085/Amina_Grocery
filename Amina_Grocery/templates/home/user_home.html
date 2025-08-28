@@ -56,17 +56,17 @@
     <div class="container text-center my-3">
         <div class="d-flex flex-wrap justify-content-center">
 
-            <a href="{% url 'list_products' category=16 %}"><button class="category-btn"> Fruits</button></a>
-            <a href="{% url 'list_products' category=17 %}"><button class="category-btn"> Vegetables</button></a>
-            <a href="{% url 'list_products' category=18 %}"><button class="category-btn"> Grocery Items</button></a>
-            <a href="{% url 'list_products' category=19 %}"><button class="category-btn"> Household Items</button></a>
-            <a href="{% url 'list_products' category=20 %}"><button class="category-btn"> Bakery Items</button></a>
+            <a href="{% url 'list_products' category=1 %}"><button class="category-btn"> Fruits</button></a>
+            <a href="{% url 'list_products' category=3 %}"><button class="category-btn"> Vegetables</button></a>
+            <a href="{% url 'list_products' category=4 %}"><button class="category-btn"> Grocery Items</button></a>
+            <a href="{% url 'list_products' category=5 %}"><button class="category-btn"> Household Items</button></a>
+            <a href="{% url 'list_products' category=2 %}"><button class="category-btn"> Bakery Items</button></a>
 
         </div>
     </div>
 
     <!-- Banner Image -->
-    <a href="{% url 'list_products' category=17 %}">
+    <a href="{% url 'list_products' category=3 %}">
         <div class="container">
             <img src="{% static 'images/home/banner.jpeg' %}" class="img-fluid w-100" alt="Grocery Banner">
         </div>
@@ -188,10 +188,10 @@
             <div class="col-md-3">
                 <h5>All Categories</h5>
                 <ul class="list-unstyled">
-                    <a href="{% url 'list_products' category=16 %}" style="text-decoration: none; color: white;"><li>Fruits</li></a>
-                    <a href="{% url 'list_products' category=17 %}" style="text-decoration: none; color: white;"><li>Vegetables</li></a>
-                    <a href="{% url 'list_products' category=18 %}" style="text-decoration: none; color: white;"><li>Oils & Spices</li></a>
-                    <a href="{% url 'list_products' category=20 %}" style="text-decoration: none; color: white;"><li>Dairy Products</li></a>
+                    <a href="{% url 'list_products' category=1 %}" style="text-decoration: none; color: white;"><li>Fruits</li></a>
+                    <a href="{% url 'list_products' category=3 %}" style="text-decoration: none; color: white;"><li>Vegetables</li></a>
+                    <a href="{% url 'list_products' category=5 %}" style="text-decoration: none; color: white;"><li>Oils & Spices</li></a>
+                    <a href="{% url 'list_products' category=2 %}" style="text-decoration: none; color: white;"><li>Dairy Products</li></a>
                 </ul>
             </div>
             <div class="col-md-3">
