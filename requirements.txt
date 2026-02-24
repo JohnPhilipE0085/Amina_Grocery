@@ -1,0 +1,23 @@
+# Core Web Framework
+Django==4.2.11
+asgiref==3.7.2
+sqlparse==0.4.4
+
+# Database & Logic
+SQLAlchemy==1.4.50
+PyYAML==6.0.1
+
+# Utilities & Formatting
+requests==2.31.0
+python-dateutil==2.8.2
+pytz==2024.1
+Pygments==2.17.2
+typing_extensions==4.10.0
+
+# Security & Identity
+cryptography==41.0.7
+PyJWT==2.7.0
+
+# If you are using MongoDB/NoSQL (Commonly used with Django)
+# pymongo
+# djongo

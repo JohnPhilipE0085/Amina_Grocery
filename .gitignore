@@ -1,25 +1,51 @@
-# Python
-__pycache__/
-*.py[cod]
-*.sqlite3
-*.log
-
-# Virtual environments
-venv/
-ENV/
-env/
-.venv/
 virtual_env/
 
-# Environment variables
 .env
 
-# Django specific
-/staticfiles/
-/media/
-/db.sqlite3
+# Ignore all files in the media folder
+media/*
 
-# IDE/editor settings
+# But keep the folder itself by not ignoring the .gitkeep file
+!.gitkeep
+
+# --- Python Specific ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+bin/
+lib/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.installed.cfg
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# --- Django Specific ---
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+# (You already have media/, which is great)
+
+# --- IDEs and Editors ---
 .vscode/
 .idea/
 *.swp
+*.swo
+
+# --- Operating System ---
+.DS_Store
+Thumbs.db
