@@ -1,0 +1,26 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment and Virtual Envs
+.env
+.venv
+env/
+venv/
+virtual_env/
+
+# Local Database (since you're using SQLite for now)
+db.sqlite3
+
+# IDEs and OS files
+.vscode/
+.DS_Store
+
+# Static and Media (Optional, if you want to handle them via volumes)
+static/
+media/

@@ -1,11 +1,12 @@
 # Core Web Framework
-Django==4.2.11
-asgiref==3.7.2
+Django==5.1.7
+asgiref==3.8.1
 sqlparse==0.4.4
 
 # Database & Logic
 SQLAlchemy==1.4.50
 PyYAML==6.0.1
+psycopg2-binary==2.9.9
 
 # Utilities & Formatting
 requests==2.31.0
@@ -13,6 +14,15 @@ python-dateutil==2.8.2
 pytz==2024.1
 Pygments==2.17.2
 typing_extensions==4.10.0
+
+# Third-party Apps & Libraries
+razorpay==1.4.1
+python-dotenv==1.0.1
+social-auth-app-django==5.4.0
+django-widget-tweaks==1.5.0
+reportlab==4.1.0
+Pillow==10.2.0
+xhtml2pdf
 
 # Security & Identity
 cryptography==41.0.7
